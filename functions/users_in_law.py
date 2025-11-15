@@ -1,4 +1,4 @@
-# for example to wtite function with async
+# for example to write function with async
 
 # btw it's my teacher's code
 
