@@ -3,6 +3,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
+# DATABASE_URL='mysql+aiomysql://root:IRiugNPzoTQTFAaZVFMjBHqGfbtDnNfT@switchback.proxy.rlwy.net:23954/railway'
+
 engine = create_async_engine('mysql+aiomysql://root@localhost:3306/ansor', echo=True)
 
 
