@@ -4,7 +4,7 @@ from sqlalchemy import update, delete
 from models.categories import CategoryM
 from models.users import UserM
 from schemas.categories import CategoryS
-from db import database
+from db import get_db
 from fastapi import HTTPException
 
 

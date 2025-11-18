@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from models.users import UserM
 from routers.login import get_current_user
 from schemas.users import UserSch
-from db import database
+from db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -13,7 +13,7 @@ admin_router = APIRouter()
 
 
 @user_router.get('/get_own_lock')
-async def ozini_korish(db: AsyncSession = Depends(database), current_user: UserM = Depends(get_current_user)):
+async def ozini_korish(db: AsyncSession = Depends(get_db), current_user: UserM = Depends(get_current_user)):
     """
     Ro'yhatdan o'tgan foydalanuvchi o'zi haqidagi ma'lumotlarni ko'radi
     :param db:
@@ -25,7 +25,7 @@ async def ozini_korish(db: AsyncSession = Depends(database), current_user: UserM
 
 
 @user_router.get('/get_users_lock')
-async def foydalanuvchilarni_korish(db:AsyncSession=Depends(database), current_user: UserM = Depends(get_current_user)):
+async def foydalanuvchilarni_korish(db:AsyncSession=Depends(get_db), current_user: UserM = Depends(get_current_user)):
     result = await db.execute(select(UserM))
     try:
         return result.scalars().all()
@@ -35,7 +35,7 @@ async def foydalanuvchilarni_korish(db:AsyncSession=Depends(database), current_u
 
 
 @user_router.post('/post_users')
-async def foydalanuvchi_qoshish(form:UserSch, db:AsyncSession = Depends(database), current_user : UserM = Depends(get_current_user)):
+async def foydalanuvchi_qoshish(form:UserSch, db:AsyncSession = Depends(get_db), current_user : UserM = Depends(get_current_user)):
     try:
         return await sign_up(form, db, current_user)
     except Exception as e:
@@ -43,7 +43,7 @@ async def foydalanuvchi_qoshish(form:UserSch, db:AsyncSession = Depends(database
 
 
 @admin_router.post('/post_admin')
-async def admin_qoshish(form:UserSch, db:AsyncSession = Depends(database), current_user : UserM = Depends(get_current_user)):
+async def admin_qoshish(form:UserSch, db:AsyncSession = Depends(get_db), current_user : UserM = Depends(get_current_user)):
     try:
         return await add_admin(form, db, current_user)
     except Exception as f:
@@ -52,7 +52,7 @@ async def admin_qoshish(form:UserSch, db:AsyncSession = Depends(database), curre
 
 
 @user_router.put('/put_own')
-async def ozini_tahrirlash(form:UserSch, db:AsyncSession = Depends(database), current_user : UserM = Depends(get_current_user)):
+async def ozini_tahrirlash(form:UserSch, db:AsyncSession = Depends(get_db), current_user : UserM = Depends(get_current_user)):
     try:
         return await update_self(form, db, current_user)
     except Exception as d:
@@ -60,7 +60,7 @@ async def ozini_tahrirlash(form:UserSch, db:AsyncSession = Depends(database), cu
 
 
 @user_router.post('/load_image')
-async def oziga_rasm_yuklash(file:UploadFile, db:AsyncSession = Depends(database), current_user : UserM = Depends(get_current_user)):
+async def oziga_rasm_yuklash(file:UploadFile, db:AsyncSession = Depends(get_db), current_user : UserM = Depends(get_current_user)):
     try:
         return await user_image(file, db, current_user)
     except Exception as i:
@@ -69,7 +69,7 @@ async def oziga_rasm_yuklash(file:UploadFile, db:AsyncSession = Depends(database
 
 
 @user_router.delete('/delete_self')
-async def ozini_ochirish(db:AsyncSession = Depends(database), current_user : UserM = Depends(get_current_user)):
+async def ozini_ochirish(db:AsyncSession = Depends(get_db), current_user : UserM = Depends(get_current_user)):
     try:
         return await delete_self(db, current_user)
     except Exception as j:

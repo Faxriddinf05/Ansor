@@ -6,7 +6,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from db import database
+from db import get_db
 from models.users import UserM
 from schemas.tokens import TokenData, Token, RefreshTokenRequest, Settings
 
@@ -65,7 +65,7 @@ async def decode_token_payload(token: str) -> dict:
         raise credentials_exception
 
 
-async def get_current_user(db: AsyncSession = Depends(database), token: str = Depends(oauth2_scheme)) -> UserM:
+async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depends(oauth2_scheme)) -> UserM:
     payload = await decode_token_payload(token)
     email: Optional[str] = payload.get("sub")
     token_type: Optional[str] = payload.get("token_type")
@@ -101,7 +101,7 @@ async def get_current_active_user(current_user: UserM = Depends(get_current_user
 
 @login_router.post("/token", response_model=Token)
 async def login_for_access_token(
-    db: AsyncSession = Depends(database),
+    db: AsyncSession = Depends(get_db),
     form_data: OAuth2PasswordRequestForm = Depends()
 ):
 
